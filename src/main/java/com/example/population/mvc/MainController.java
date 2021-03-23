@@ -1,10 +1,19 @@
 package com.example.population.mvc;
 
+import com.example.population.data.City;
+import com.example.population.data.County;
 import com.example.population.data.DatabaseManager;
+import com.example.population.data.Region;
+import com.example.population.dto.CityDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
 
 @Controller
 public class MainController {
@@ -27,6 +36,56 @@ public class MainController {
         model.addAttribute("city", city);
 
         return "details";
+    }
+
+    @GetMapping("/city/add")
+    public String getAddCity(Model model) {
+
+        var dm = new DatabaseManager();
+        var counties = dm.getCounties();
+
+        model.addAttribute("counties", counties);
+
+        var regions = dm.getRegions();
+
+        model.addAttribute("regions", regions);
+
+        return "add_city";
+    }
+
+    @PostMapping("/city/add")
+    public ModelAndView addCity(@ModelAttribute("addCityData") CityDto dto) {
+
+        var dm = new DatabaseManager();
+
+        Region region = null;
+        County county = null;
+
+        if(dto.getCRegionId() != null) {
+            var res = dm.getRegions().stream()
+                    .filter(r -> r.getId() == dto.getCRegionId())
+                    .findFirst();
+
+            if(res.isPresent()) {
+                region = res.get();
+            }
+        }
+
+        if(dto.getCCountyId() != null) {
+            var res = dm.getCounties().stream()
+                    .filter(r -> r.getId() == dto.getCCountyId())
+                    .findFirst();
+
+            if(res.isPresent()) {
+                county = res.get();
+            }
+        }
+
+        var city = new City(0, dto.getCName(), region, county, dto.getCFounded(), new ArrayList<>());
+
+        dm.addUpdateCity(city);
+
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/region/{id}/cities")

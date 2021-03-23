@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add city</title>
+</head>
+<body>
+<h1>Add city</h1>
+<form name="addCityData" id="addCityData" method="post" action="/city/add">
+    <div>
+        <label>Name:</label>
+        <input required type="text" name="cName" id="cName" maxlength="100">
+    </div>
+    <div>
+        <label>Founded:</label>
+        <input type="number" name="cFounded" id="cFounded" min="500" max="2500">
+    </div>
+    <div>
+        <label>County:</label>
+        <select name="cCountyId" id="cCountyId">
+            <option value="">-</option>
+            <option th:each="county: ${counties}" th:value="${county.getId()}" th:text="${county.getName()}"></option>
+        </select>
+    </div>
+    <div>
+        <label>Region:</label>
+        <select name="cRegionId" id="cRegionId">
+            <option value="">-</option>
+            <option th:each="region: ${regions}" th:value="${region.getId()}" th:text="${region.getName()}"></option>
+        </select>
+    </div>
+    <input type="submit" value="Add city">
+</form>
+</body>
+</html>
