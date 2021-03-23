@@ -254,6 +254,75 @@ public class DatabaseManager {
         return null;
     }
 
+    public List<City> getCitiesByRegionId(int regionId) {
+        List<City> items = new ArrayList<>();
+
+        try {
+            var con = getConnection();
+
+            var stmt = con.prepareCall("{CALL spGetCitiesInRegion(?)}");
+            stmt.setInt(1, regionId);
+
+            var rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                items.add(City.create(rs));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return items;
+    }
+
+    public Integer addUpdateCity(City city) {
+        Connection con = null;
+        try {
+            con = getConnection();
+
+            var stmt = con.prepareCall("{CALL spAddUpdateCity(?,?,?,?,?,?)}");
+
+            stmt.setInt("id", city.getId());
+            stmt.setString("name", city.getName());
+
+            if(city.getFounded() != null) {
+                stmt.setInt("founded", city.getFounded());
+            } else {
+                stmt.setNull("founded", Types.INTEGER);
+            }
+
+            if(city.getRegion() != null) {
+                stmt.setInt("region_id", city.getRegion().getId());
+            } else {
+                stmt.setNull("region_id", Types.INTEGER);
+            }
+
+            if(city.getCounty() != null) {
+                stmt.setInt("county_id", city.getCounty().getId());
+            } else {
+                stmt.setNull("county_id", Types.INTEGER);
+            }
+
+            stmt.registerOutParameter("new_id", Types.INTEGER);
+
+            stmt.executeUpdate();
+
+            Integer id = stmt.getInt("new_id");
+
+            city.setId(id);
+
+            con.close();
+
+            return id;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return null;
+    }
+
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(connectionUrl, "test", "test123");
     }
