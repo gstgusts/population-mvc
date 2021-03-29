@@ -5,6 +5,7 @@ import com.example.population.data.County;
 import com.example.population.data.DatabaseManager;
 import com.example.population.data.Region;
 import com.example.population.dto.CityDto;
+import com.example.population.models.AddCityModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,14 +42,24 @@ public class MainController {
     @GetMapping("/city/add")
     public String getAddCity(Model model) {
 
+        var dataModel = new AddCityModel();
+
         var dm = new DatabaseManager();
         var counties = dm.getCounties();
 
-        model.addAttribute("counties", counties);
+        dataModel.setCounties(counties);
+
+        // model.addAttribute("counties", counties);
 
         var regions = dm.getRegions();
 
-        model.addAttribute("regions", regions);
+        dataModel.setRegions(regions);
+
+        dataModel.name = "asfdasdfasdfasdf";
+
+        // model.addAttribute("regions", regions);
+
+        model.addAttribute("viewModel", dataModel);
 
         return "add_city";
     }
