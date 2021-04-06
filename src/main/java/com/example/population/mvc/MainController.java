@@ -6,6 +6,7 @@ import com.example.population.data.DatabaseManager;
 import com.example.population.data.Region;
 import com.example.population.dto.CityDto;
 import com.example.population.models.AddCityModel;
+import com.example.population.models.SwitchRegionModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,9 +106,18 @@ public class MainController {
         var dm = new DatabaseManager();
         var cities = dm.getCitiesByRegionId(id);
 
+        var regions = dm.getRegions();
+
         model.addAttribute("cities", cities);
+        model.addAttribute("regions", regions);
+        model.addAttribute("selectedRegion", id);
 
         return "cities_in_region";
+    }
+
+    @PostMapping("/region/cities")
+    public ModelAndView getCitiesForRegion(@ModelAttribute("switchRegion") SwitchRegionModel request) {
+        return new ModelAndView("redirect:/region/"+request.getSelectedRegion()+"/cities");
     }
 
     @GetMapping("/chart/{id}")

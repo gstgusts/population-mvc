@@ -5,6 +5,12 @@
     <title>Cities in region</title>
 </head>
 <body>
+<form action="/region/cities" method="post" name="switchRegion" id="switchRegion">
+    <select name="selectedRegion" id="selectedRegion">
+        <option th:each="region: ${regions}" th:selected="${region.getId() == selectedRegion}"  th:value="${region.getId()}" th:text="${region.getName()}"></option>
+    </select>
+    <input type="submit" value="Switch region">
+</form>
 <ul>
     <li th:each="city: ${cities}">
         <a th:href="${'/chart/' + city.getId()}" th:text="${city.getName()}"></a>
