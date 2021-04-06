@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Population</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function searchCities() {
+           let selectedRegion = $('#selectedRegion').val();
+
+           let request = {
+                selectedRegion: selectedRegion
+           };
+
+           $('#loader').css('display','block');
+
+            $.ajax({
+                method: "POST",
+                url: "/search_ajax",
+                data: JSON.stringify(request),
+                timeout: 1000,
+                headers: {
+                  "Content-Type" : "application/json"
+                }
+            })
+            .done(function(data) {
+                $('#searchResult').html(data);
+
+                $('#loader').css('display','none');
+            });
+        }
+    </script>
+</head>
+<body>
+<form name="switchRegion" id="switchRegion">
+    <select onchange="searchCities()" name="selectedRegion" id="selectedRegion">
+        <option th:each="region: ${regions}" th:value="${region.getId()}" th:text="${region.getName()}"></option>
+    </select>
+</form>
+
+<span id="loader" style="display: none">loading...</span>
+
+<div id="searchResult">
+</div>
+
+</body>
+</html>

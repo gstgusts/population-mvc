@@ -7,12 +7,10 @@ import com.example.population.data.Region;
 import com.example.population.dto.CityDto;
 import com.example.population.models.AddCityModel;
 import com.example.population.models.SwitchRegionModel;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -171,5 +169,25 @@ public class MainController {
         model.addAttribute("selectedRegion", Integer.parseInt(switchRegionModel.getSelectedRegion()));
 
         return "city_search";
+    }
+
+    @GetMapping("/search_ajax")
+    public String searchCitiesAjax(Model model) {
+        var dm = new DatabaseManager();
+
+        model.addAttribute("regions", dm.getRegions());
+
+        return "city_search_ajax";
+    }
+
+    @PostMapping(value = "/search_ajax", consumes = { MediaType.APPLICATION_JSON_VALUE })
+    public String findCitiesAjax(@RequestBody SwitchRegionModel switchRegionModel, Model model) {
+        var dm = new DatabaseManager();
+
+        var cities = dm.getCitiesByRegionId(Integer.parseInt(switchRegionModel.getSelectedRegion()));
+
+        model.addAttribute("cities", cities);
+
+        return "city_search_results_ajax";
     }
 }
