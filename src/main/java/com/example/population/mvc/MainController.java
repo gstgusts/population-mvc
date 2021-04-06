@@ -148,4 +148,28 @@ public class MainController {
 
         return "google_chart";
     }
+
+    @GetMapping("/search")
+    public String searchCities(Model model) {
+        var dm = new DatabaseManager();
+
+        model.addAttribute("regions", dm.getRegions());
+        model.addAttribute("cities", dm.getCities());
+        model.addAttribute("selectedRegion", 0);
+
+        return "city_search";
+    }
+
+    @PostMapping("/search")
+    public String findCities(@ModelAttribute("switchRegion") SwitchRegionModel switchRegionModel,  Model model) {
+        var dm = new DatabaseManager();
+
+        var cities = dm.getCitiesByRegionId(Integer.parseInt(switchRegionModel.getSelectedRegion()));
+
+        model.addAttribute("cities", cities);
+        model.addAttribute("regions", dm.getRegions());
+        model.addAttribute("selectedRegion", Integer.parseInt(switchRegionModel.getSelectedRegion()));
+
+        return "city_search";
+    }
 }

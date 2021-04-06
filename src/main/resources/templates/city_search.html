@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Population</title>
+</head>
+<body>
+<form action="/search" method="post" name="switchRegion" id="switchRegion">
+    <select name="selectedRegion" id="selectedRegion">
+        <option th:each="region: ${regions}" th:selected="${region.getId() == selectedRegion}"  th:value="${region.getId()}" th:text="${region.getName()}"></option>
+    </select>
+    <input type="submit" value="Search">
+</form>
+<ul>
+    <li th:each="city: ${cities}">
+        <a th:href="${'/city/' + city.getId()}" th:text="${city.getName()}"></a>
+    </li>
+</ul>
+</body>
+</html>
